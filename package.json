@@ -1,0 +1,33 @@
+{
+  "name": "html-test-loader",
+  "version": "0.0.1",
+  "description": "Webpack loader to run tests on html templates.",
+  "main": "index.js",
+  "scripts": {
+    "test": "(cd test; webpack)"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wombleton/html-test-loader.git"
+  },
+  "keywords": [
+    "webpack",
+    "loader",
+    "html",
+    "test"
+  ],
+  "author": "Rowan Crawford <wombleton@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/wombleton/html-test-loader/issues"
+  },
+  "homepage": "https://github.com/wombleton/html-test-loader#readme",
+  "dependencies": {
+    "cheerio": "0.19.0",
+    "lodash.foreach": "3.0.3"
+  },
+  "devDependencies": {
+    "html-loader": "0.4.0",
+    "webpack": "1.12.9"
+  }
+}
