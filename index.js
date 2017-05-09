@@ -12,7 +12,7 @@ module.exports = function (source) {
   var key = this.query.substring(1) || 'htmlTest';
 
   var filename = path.relative(this.options.context, this.resourcePath);
-  var $ = cheerio(source);
+  var $ = cheerio('<div>' + source + '</div>');
 
   var config = this.options[key] || {};
 
