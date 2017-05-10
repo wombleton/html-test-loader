@@ -17,12 +17,15 @@ var config = {
   htmlTests: {
     '[type="text"]': '[placeholder]',
     '[ng-click]': '[analytics-on]',
-    'a': function(element) {
-      if (element.text()) {
-        return true
-      }
-      return false;
-    } 
+    'a': function (element) {
+      return element.text();
+    },
+    'a[href]': {
+      test: function (element) {
+        return element.text();
+      },
+      message: 'Element needs to have text'
+    }
   },
   module: {
     preLoaders: [

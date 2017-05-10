@@ -3,31 +3,41 @@
 var cheerio = require('cheerio');
 var forEach = require('lodash.foreach');
 var isFunction = require('lodash.isfunction');
+var isObject = require('lodash.isobjectlike');
 var format = require('util').format;
 var path = require('path');
 
 module.exports = function (source) {
-  this.cacheable();
+  var self = this;
+  self.cacheable();
 
   var warnings = [];
-  var key = this.query.substring(1) || 'htmlTest';
+  var key = self.query.substring(1) || 'htmlTest';
 
-  var filename = path.relative(this.options.context, this.resourcePath);
+  var filename = path.relative(self.options.context, self.resourcePath);
   var $ = cheerio('<div>' + source + '</div>');
 
-  var config = this.options[key] || {};
+  var config = self.options[key] || {};
 
   forEach(config, function (assertion, test) {
     var nodes = $.find(test);
 
     forEach(nodes, function (node) {
       var $node = cheerio(node);
-      // If our assertation is a function run it or elese look for the assertation to be on the node as normal
-      if (isFunction(assertion)) {
+
+      if (isObject(assertion)) { // object with `test` and `message` properties
+        if (isFunction(assertion.test)) {
+          if (!assertion.test($node)) {
+            warnings.push(format('%s from %s failed: ', $node.toString(), filename, assertion.message));
+          }
+        } else {
+          self.emitError('HTML test requires `test` property');
+        }
+      } else if (isFunction(assertion)) { // function test, receives cheero node
         if (!assertion($node)) {
           warnings.push(format('%s from %s failed the: \'%s\' assertion.', $node.toString(), filename, assertion.toString()));
         }
-      } else {
+      } else { // assumed to be "is" test
         if (!$node.is(assertion)) {
           warnings.push(format('%s from %s failed the \'%s\' assertion.', $node.toString(), filename, assertion));
         }
@@ -36,7 +46,7 @@ module.exports = function (source) {
   });
 
   if (warnings.length) {
-    this.emitWarning(warnings.join('\n'));
+    self.emitWarning(warnings.join('\n'));
   }
 
   return source;
