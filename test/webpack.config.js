@@ -16,7 +16,16 @@ var config = {
   },
   htmlTests: {
     '[type="text"]': '[placeholder]',
-    '[ng-click]': '[analytics-on]'
+    '[ng-click]': '[analytics-on]',
+    'a': function (element) {
+      return element.text();
+    },
+    'a[href]': {
+      test: function (element) {
+        return element.text();
+      },
+      message: 'Element needs to have text'
+    }
   },
   module: {
     preLoaders: [
