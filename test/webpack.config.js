@@ -18,7 +18,6 @@ var config = {
     '[type="text"]': '[placeholder]',
     '[ng-click]': '[analytics-on]',
     'a': function(element) {
-      console.log(element.text())
       if (element.text()) {
         return true
       }
