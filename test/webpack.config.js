@@ -16,7 +16,14 @@ var config = {
   },
   htmlTests: {
     '[type="text"]': '[placeholder]',
-    '[ng-click]': '[analytics-on]'
+    '[ng-click]': '[analytics-on]',
+    'a': function(element) {
+      console.log(element.text())
+      if (element.text()) {
+        return true
+      }
+      return false;
+    } 
   },
   module: {
     preLoaders: [
