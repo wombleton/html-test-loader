@@ -3,7 +3,6 @@
 var cheerio = require('cheerio');
 var forEach = require('lodash.foreach');
 var isFunction = require('lodash.isfunction');
-var isObject = require('lodash.isobjectlike');
 var format = require('util').format;
 var path = require('path');
 
@@ -19,27 +18,25 @@ module.exports = function (source) {
 
   var config = self.options[key] || {};
 
-  forEach(config, function (assertion, test) {
-    var nodes = $.find(test);
+  forEach(config, function (opts) {
+    var test = opts.test;
+
+    var nodes = $.find(opts.finder);
 
     forEach(nodes, function (node) {
       var $node = cheerio(node);
 
-      if (isObject(assertion)) { // object with `test` and `message` properties
-        if (isFunction(assertion.test)) {
-          if (!assertion.test($node)) {
-            warnings.push(format('%s from %s failed: ', $node.toString(), filename, assertion.message));
+      if (isFunction(test)) { // function test, receives cheerio node
+        if (!test($node)) {
+          if (opts.message) {
+            warnings.push(format('%s from %s failed \'%s\'', $node.toString(), filename, opts.message));
+          } else {
+            warnings.push(format('%s from %s failed \'%s\'', $node.toString(), filename, test.name !== 'test' ? test.name : test.toString()));
           }
-        } else {
-          self.emitError('HTML test requires `test` property');
         }
-      } else if (isFunction(assertion)) { // function test, receives cheero node
-        if (!assertion($node)) {
-          warnings.push(format('%s from %s failed the: \'%s\' assertion.', $node.toString(), filename, assertion.toString()));
-        }
-      } else { // assumed to be "is" test
-        if (!$node.is(assertion)) {
-          warnings.push(format('%s from %s failed the \'%s\' assertion.', $node.toString(), filename, assertion));
+      } else {
+        if (!$node.is(test)) {
+          warnings.push(format('%s from %s failed the \'%s\' test.', $node.toString(), filename, test));
         }
       }
     });
