@@ -14,19 +14,23 @@ var config = {
     reasons: true, // verbose errors
     chunks: false  // clean summary output
   },
-  htmlTests: {
-    '[type="text"]': '[placeholder]',
-    '[ng-click]': '[analytics-on]',
-    'a': function (element) {
-      return element.text();
+  htmlTests: [
+    { finder: '[type="text"]', test: '[placeholder]' },
+    { finder: '[ng-click]', test: '[analytics-on]' },
+    {
+      finder: 'a',
+      test: function hasText (element) {
+        return element.text().trim();
+      }
     },
-    'a[href]': {
+    {
+      finder: 'a',
       test: function (element) {
-        return element.text();
+        return element.text().trim();
       },
       message: 'Element needs to have text'
     }
-  },
+  ],
   module: {
     preLoaders: [
       {
