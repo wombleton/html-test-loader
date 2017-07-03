@@ -13,7 +13,6 @@ module.exports = function (source) {
   var warnings = [];
   var key = self.query.substring(1) || 'htmlTest';
 
-  var filename = path.relative(self.options.context, self.resourcePath);
   var $ = cheerio('<div>' + source + '</div>');
 
   var config = self.options[key] || {};
@@ -29,14 +28,14 @@ module.exports = function (source) {
       if (isFunction(test)) { // function test, receives cheerio node
         if (!test($node)) {
           if (opts.message) {
-            warnings.push(format('%s from %s failed \'%s\'', $node.toString(), filename, opts.message));
+            warnings.push(format('%s from %s failed \'%s\'', $node.toString(), self.resourcePath, opts.message));
           } else {
-            warnings.push(format('%s from %s failed \'%s\'', $node.toString(), filename, test.name !== 'test' ? test.name : test.toString()));
+            warnings.push(format('%s from %s failed \'%s\'', $node.toString(), self.resourcePath, test.name !== 'test' ? test.name : test.toString()));
           }
         }
       } else {
         if (!$node.is(test)) {
-          warnings.push(format('%s from %s failed the \'%s\' test.', $node.toString(), filename, test));
+          warnings.push(format('%s from %s failed the \'%s\' test.', $node.toString(), self.resourcePath, test));
         }
       }
     });
